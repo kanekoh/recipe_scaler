@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レシピスケーラー（保存と買い物リスト付き）</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      margin: 20px;
+      color: #333;
+    }
+
+    h1, h2 {
+      color: #2c3e50;
+    }
+
+    button {
+      background-color: #3498db;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      margin: 4px 4px 10px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    input[type="text"], input[type="number"], select {
+      padding: 6px;
+      margin: 4px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #ecf0f1;
+    }
+
+    .recipe {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    #shopping-list {
+      background: white;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .saved-item {
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px;
+      margin: 6px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .saved-item button {
+      background-color: #27ae60;
+    }
+
+    .saved-item button:last-child {
+      background-color: #e74c3c;
+      margin-left: 10px;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      th {
+        background-color: transparent;
+      }
+
+      td {
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>レシピスケーラー</h1>
+  <button onclick="addRecipe()">＋レシピを追加</button>
+  <button onclick="scaleAll()">📏 全レシピ変換</button>
+  <button onclick="saveToSlot()">💾 日付で保存</button>
+  <button onclick="clearAll()">🧹 すべてクリア</button>
+  <button onclick="exportAll()">📤 エクスポート</button>
+  <input type="file" onchange="importAll(event)" />
+  <div id="recipes"></div>
+
+  <h2>🛒 買い物リスト（合計量）</h2>
+  <table id="shopping-list">
+    <thead><tr><th>食材</th><th>合計量</th><th>単位</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>📂 保存済みデータ</h2>
+  <div id="saved-list"></div>
+
+  <script>
+    const units = ['g', 'ml', '個', '大さじ', '小さじ', 'カップ'];
+    let recipeCount = 0;
+
+    function createIngredientRow(data = {}) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" placeholder="食材" value="${data.name || ''}"></td>
+        <td><input type="number" placeholder="元の量" value="${data.amount || ''}" class="original-amount"></td>
+        <td>
+          <select>${units.map(u => `<option value="${u}"${data.unit === u ? ' selected' : ''}>${u}</option>`).join('')}</select>
+        </td>
+        <td><input type="text" readonly class="scaled-amount"></td><td><button onclick="this.closest('tr').remove()">🗑</button></td>
+      `;
+      return tr;
+    }
+
+    function addRecipe(data = null) {
+      const recipeId = recipeCount++;
+      const div = document.createElement('div');
+      div.className = 'recipe';
+      div.id = `recipe-${recipeId}`;
+      div.innerHTML = `
+        <input type="text" placeholder="レシピ名" value="${data?.title || ''}"><br>
+        元の人数: <input type="number" id="from-${recipeId}" value="2" style="width:60px;">
+        → 希望人数: <input type="number" id="to-${recipeId}" value="4" style="width:60px;">
+        <button onclick="scaleRecipe(${recipeId})">変換</button><br><br>
+        <table><thead><tr><th>食材</th><th>元の分量</th><th>単位</th><th>変換後</th><th>削除</th></tr></thead><tbody></tbody></table><br>
+      `;
+      const tbody = div.querySelector('tbody');
+      const btn = document.createElement('button');
+      btn.textContent = '＋材料を追加';
+      btn.onclick = () => tbody.appendChild(createIngredientRow());
+      div.appendChild(btn);
+      
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '🗑 このレシピを削除';
+    deleteBtn.onclick = () => div.remove();
+    div.appendChild(deleteBtn);
+    document.getElementById('recipes').appendChild(div);
+    
+
+      if (data?.ingredients) {
+        data.ingredients.forEach(ing => tbody.appendChild(createIngredientRow(ing)));
+      } else {
+        tbody.appendChild(createIngredientRow());
+      }
+    }
+
+    function scaleRecipe(recipeId) {
+      const from = parseFloat(document.getElementById(`from-${recipeId}`).value);
+      const to = parseFloat(document.getElementById(`to-${recipeId}`).value);
+      if (!from || !to || from <= 0) return;
+
+      const div = document.getElementById(`recipe-${recipeId}`);
+      div.querySelectorAll('tbody tr').forEach(tr => {
+        const originalVal = parseFloat(tr.querySelector('.original-amount').value);
+        const output = tr.querySelector('.scaled-amount');
+        output.value = !isNaN(originalVal) ? (originalVal * to / from).toFixed(2) : '';
+      });
+    }
+
+    function scaleAll() {
+      for (let i = 0; i < recipeCount; i++) {
+        if (document.getElementById(`recipe-${i}`)) scaleRecipe(i);
+      }
+      updateShoppingList();
+    }
+
+    function updateShoppingList() {
+      const summary = {};
+      document.querySelectorAll('.recipe').forEach(div => {
+        div.querySelectorAll('tbody tr').forEach(tr => {
+          const name = tr.cells[0].querySelector('input').value;
+          const scaled = parseFloat(tr.cells[3].querySelector('input').value);
+          const unit = tr.cells[2].querySelector('select').value;
+          if (!name || isNaN(scaled)) return;
+          const key = name + '__' + unit;
+          if (!summary[key]) summary[key] = { name, amount: 0, unit };
+          summary[key].amount += scaled;
+        });
+      });
+      const tbody = document.querySelector('#shopping-list tbody');
+      tbody.innerHTML = '';
+      Object.values(summary).forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${item.name}</td><td>${item.amount.toFixed(2)}</td><td>${item.unit}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getRecipesData() {
+      const recipes = [];
+      document.querySelectorAll('.recipe').forEach(div => {
+        const title = div.querySelector('input').value;
+        const ingredients = [];
+        div.querySelectorAll('tbody tr').forEach(tr => {
+          const name = tr.cells[0].querySelector('input').value;
+          const amount = tr.cells[1].querySelector('input').value;
+          const unit = tr.cells[2].querySelector('select').value;
+          if (name) ingredients.push({ name, amount, unit });
+        });
+        recipes.push({ title, ingredients });
+      });
+      return recipes;
+    }
+
+    function saveToSlot() {
+      const now = new Date();
+      
+      const titleInput = document.querySelector('.recipe input[type="text"]');
+      const title = titleInput ? titleInput.value.trim() : 'レシピ';
+      const key = `recipe_${title}_${now.toISOString().split('T')[0]}`;
+     // YYYY-MM-DD
+      localStorage.setItem(`recipe_${key}`, JSON.stringify(getRecipesData()));
+      updateSavedList();
+    }
+
+    function updateSavedList() {
+      const div = document.getElementById('saved-list');
+      div.innerHTML = '';
+      Object.keys(localStorage).filter(k => k.startsWith("recipe_")).forEach(key => {
+        const label = key.replace("recipe_", "").replaceAll("_", " ");
+        const container = document.createElement('div');
+        container.className = 'saved-item';
+        
+    container.innerHTML = `
+      <button onclick="loadFromSlot('${key}')">📥 復元</button>
+      <span style="margin: 0 10px;">📅 ${label}</span>
+      <button onclick="confirmDeleteSlot('${key}')">🗑 削除</button>
+    `;
+    
+        div.appendChild(container);
+      });
+    }
+
+    function loadFromSlot(key) {
+      const data = JSON.parse(localStorage.getItem(key));
+      clearAll(false);
+      data.forEach(r => addRecipe(r));
+      scaleAll();
+    }
+
+    
+    function confirmDeleteSlot(key) {
+      if (confirm('この保存データを削除してもよろしいですか？')) {
+        deleteSlot(key);
+      }
+    }
+    function deleteSlot(key) {
+    
+      localStorage.removeItem(key);
+      updateSavedList();
+    }
+
+    function clearAll(update = true) {
+      document.getElementById('recipes').innerHTML = '';
+      recipeCount = 0;
+      if (update) updateShoppingList();
+    }
+
+    function exportAll() {
+      const data = {};
+      Object.keys(localStorage).filter(k => k.startsWith("recipe_")).forEach(k => {
+        data[k] = JSON.parse(localStorage.getItem(k));
+      });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'all_recipes.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importAll(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const json = JSON.parse(e.target.result);
+        Object.entries(json).forEach(([key, val]) => {
+          localStorage.setItem(key, JSON.stringify(val));
+        });
+        updateSavedList();
+      };
+      reader.readAsText(file);
+    }
+
+    window.onload = updateSavedList;
+  </script>
+</body>
+</html>
