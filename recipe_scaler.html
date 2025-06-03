@@ -117,25 +117,38 @@
   </style>
 </head>
 <body>
-  <h1>レシピスケーラー</h1>
-  <button onclick="addRecipe()">＋レシピを追加</button>
-  <button onclick="scaleAll()">📏 全レシピ変換</button>
-  <button onclick="saveToSlot()">💾 日付で保存</button>
-  <button onclick="clearAll()">🧹 すべてクリア</button>
-  <button onclick="exportAll()">📤 エクスポート</button>
-  <input type="file" onchange="importAll(event)" />
-  <div id="recipes"></div>
-
-  <h2>🛒 買い物リスト（合計量）</h2>
-  <table id="shopping-list">
-    <thead><tr><th>食材</th><th>合計量</th><th>単位</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>📂 保存済みデータ</h2>
-  <div id="saved-list"></div>
-
-  <script>
+    <nav style="display:flex;gap:10px;margin-bottom:20px;">
+      <button onclick="showView('edit')" id="nav-edit">レシピ編集</button>
+      <button onclick="showView('shopping')" id="nav-shopping">買い物リスト</button>
+      <button onclick="showView('saved')" id="nav-saved">保存データ管理</button>
+    </nav>
+    <div id="view-edit">
+      <h1>レシピスケーラー</h1>
+      <button onclick="addRecipe()">＋レシピを追加</button>
+      <button onclick="scaleAll()">📏 全レシピ変換</button>
+      <button onclick="saveToSlot()">💾 日付で保存</button>
+      <button onclick="clearAll()">🧹 すべてクリア</button>
+      <div id="recipes"></div>
+    </div>
+    <div id="view-shopping" style="display:none">
+      <h2>🛒 買い物リスト（合計量）</h2>
+      <button onclick="scaleAll()">再計算</button>
+      <input type="text" id="search-saved" placeholder="保存済みレシピ検索" oninput="filterSavedForShopping()" style="margin:8px 0;width:60%">
+      <button onclick="showSavedForShopping()">保存済みデータから追加</button>
+      <div id="saved-for-shopping" style="display:none;background:#f9f9f9;padding:10px;border-radius:8px;margin-bottom:10px;"></div>
+      <table id="shopping-list">
+        <thead><tr><th>食材</th><th>合計量</th><th>単位</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="view-saved" style="display:none">
+      <h2>📂 保存済みデータ</h2>
+      <button onclick="exportAll()">📤 エクスポート</button>
+      <input type="file" onchange="importAll(event)" />
+      <button onclick="alert('将来的に対応予定です')">レシピサイトからインポート（準備中）</button>
+      <div id="saved-list"></div>
+    </div>
+    <script>
     const units = ['g', 'ml', '個', '大さじ', '小さじ', 'カップ'];
     let recipeCount = 0;
 
@@ -242,89 +255,175 @@
       return recipes;
     }
 
+    // 保存データのキーを料理名メイン＋日付にし、最終更新日も保存
     function saveToSlot() {
       const now = new Date();
-      
-      const titleInput = document.querySelector('.recipe input[type="text"]');
-      const title = titleInput ? titleInput.value.trim() : 'レシピ';
-      const key = `recipe_${title}_${now.toISOString().split('T')[0]}`;
-     // YYYY-MM-DD
-      localStorage.setItem(`recipe_${key}`, JSON.stringify(getRecipesData()));
+      const recipes = getRecipesData();
+      if (!recipes.length) return;
+      const title = recipes[0].title ? recipes[0].title.trim() : 'レシピ';
+      const key = `recipe_${title}`;
+      const data = { updated: now.toISOString(), recipes };
+      localStorage.setItem(key, JSON.stringify(data));
       updateSavedList();
     }
 
+    // 保存リスト表示を料理名メイン＋最終更新日形式に
     function updateSavedList() {
       const div = document.getElementById('saved-list');
       div.innerHTML = '';
       Object.keys(localStorage).filter(k => k.startsWith("recipe_")).forEach(key => {
-        const label = key.replace("recipe_", "").replaceAll("_", " ");
+        const data = JSON.parse(localStorage.getItem(key));
+        const title = key.replace("recipe_", "");
+        const date = data.updated ? data.updated.split('T')[0] : '';
         const container = document.createElement('div');
         container.className = 'saved-item';
-        
-    container.innerHTML = `
-      <button onclick="loadFromSlot('${key}')">📥 復元</button>
-      <span style="margin: 0 10px;">📅 ${label}</span>
-      <button onclick="confirmDeleteSlot('${key}')">🗑 削除</button>
-    `;
-    
+        // 削除ボタンはconfirm付きでdeleteSlotを呼ぶ
+        container.innerHTML = `
+          <button onclick="loadFromSlot('${key}')">📥 復元</button>
+          <span style="margin: 0 10px;">🍳 ${title} <span style='color:#888;font-size:0.9em'>(最終更新:${date})</span></span>
+          <button onclick=\"if(confirm('本当に削除しますか？'))deleteSlot('${key}')\">🗑 削除</button>
+        `;
         div.appendChild(container);
       });
     }
 
+    // 保存データのロードも新形式に対応
     function loadFromSlot(key) {
       const data = JSON.parse(localStorage.getItem(key));
       clearAll(false);
-      data.forEach(r => addRecipe(r));
+      (data.recipes || data).forEach(r => addRecipe(r));
       scaleAll();
     }
 
-    
-    function confirmDeleteSlot(key) {
-      if (confirm('この保存データを削除してもよろしいですか？')) {
-        deleteSlot(key);
-      }
+    // --- 買い物リストから保存済みデータを検索・追加 ---
+    function showSavedForShopping() {
+      const box = document.getElementById('saved-for-shopping');
+      box.style.display = box.style.display === 'none' ? '' : 'none';
+      filterSavedForShopping();
     }
+    function filterSavedForShopping() {
+      const query = document.getElementById('search-saved').value.trim();
+      const box = document.getElementById('saved-for-shopping');
+      box.innerHTML = '';
+      Object.keys(localStorage).filter(k => k.startsWith('recipe_')).forEach(key => {
+        const data = JSON.parse(localStorage.getItem(key));
+        const title = key.replace('recipe_', '');
+        if (!query || title.includes(query)) {
+          const btn = document.createElement('button');
+          btn.textContent = `追加: ${title}`;
+          btn.style.margin = '4px';
+          btn.onclick = () => {
+            (data.recipes || data).forEach(r => addRecipe(r));
+            scaleAll();
+            box.style.display = 'none';
+          };
+          box.appendChild(btn);
+        }
+      });
+      if (!box.innerHTML) box.innerHTML = '<span style="color:#888">該当なし</span>';
+    }
+    // ビュー切り替え
+      function showView(view) {
+        document.getElementById('view-edit').style.display = view === 'edit' ? '' : 'none';
+        document.getElementById('view-shopping').style.display = view === 'shopping' ? '' : 'none';
+        document.getElementById('view-saved').style.display = view === 'saved' ? '' : 'none';
+        // ナビのアクティブ表示
+        document.getElementById('nav-edit').style.backgroundColor = view === 'edit' ? '#2980b9' : '#3498db';
+        document.getElementById('nav-shopping').style.backgroundColor = view === 'shopping' ? '#2980b9' : '#3498db';
+        document.getElementById('nav-saved').style.backgroundColor = view === 'saved' ? '#2980b9' : '#3498db';
+      }
+      // 初期表示
+      window.onload = function() {
+        updateSavedList();
+        showView('edit');
+      }
+      // テスト用にwindowにエクスポート
+  window._test = {
+    saveToSlot, updateSavedList, loadFromSlot, deleteSlot, getRecipesData, clearAll,
+    localStorage,
+    addRecipe,
+    filterSavedForShopping,
+    showSavedForShopping,
+    scaleAll,
+    updateShoppingList
+  };
+  // テストケース
+  function runAllTests() {
+    let passed = 0, failed = 0, logs = [];
+    function assert(cond, msg) {
+      if (cond) { passed++; logs.push('✅ ' + msg); }
+      else { failed++; logs.push('❌ ' + msg); }
+    }
+    // 1. 事前クリア
+    clearAll();
+    Object.keys(localStorage).filter(k=>k.startsWith('recipe_')).forEach(k=>localStorage.removeItem(k));
+    updateSavedList();
+    // 2. 保存→復元→削除
+    addRecipe({title:'テスト料理',ingredients:[{name:'にんじん',amount:100,unit:'g'}]});
+    scaleAll();
+    saveToSlot();
+    let keys = Object.keys(localStorage).filter(k=>k.startsWith('recipe_'));
+    assert(keys.length===1, '保存できる');
+    loadFromSlot(keys[0]);
+    assert(document.querySelector('.recipe input').value==='テスト料理', '復元できる');
+    deleteSlot(keys[0]);
+    assert(!localStorage.getItem(keys[0]), '削除できる');
+    // 3. 検索・追加
+    addRecipe({title:'カレー',ingredients:[{name:'じゃがいも',amount:2,unit:'個'}]});
+    saveToSlot();
+    document.getElementById('search-saved').value = 'カレー';
+    filterSavedForShopping();
+    assert(document.getElementById('saved-for-shopping').textContent.includes('カレー'), '検索できる');
+    // 4. 買い物リスト集計
+    scaleAll();
+    updateShoppingList();
+    assert(document.querySelector('#shopping-list').textContent.includes('じゃがいも'), '買い物リスト集計');
+    // 5. 保存名重複
+    addRecipe({title:'カレー',ingredients:[{name:'たまねぎ',amount:1,unit:'個'}]});
+    saveToSlot();
+    let data = JSON.parse(localStorage.getItem('recipe_カレー'));
+    assert(data.recipes.length>=1, '重複名で上書き保存');
+    // 結果表示
+    document.getElementById('test-result').innerHTML =
+      `テスト: <b>${passed}件成功</b> / <b style='color:red'>${failed}件失敗</b><br>`+
+      logs.map(x=>x).join('<br>');
+  }
+    // --- 必ずグローバルスコープにdeleteSlotを定義 ---
     function deleteSlot(key) {
-    
       localStorage.removeItem(key);
       updateSavedList();
+      clearAll();
+      updateShoppingList();
     }
+    window.deleteSlot = deleteSlot;
 
+    // --- 必ずグローバルスコープにclearAllを定義 ---
     function clearAll(update = true) {
       document.getElementById('recipes').innerHTML = '';
       recipeCount = 0;
       if (update) updateShoppingList();
     }
+    window.clearAll = clearAll;
 
+    // --- 必ずグローバルスコープにexportAllを定義 ---
     function exportAll() {
       const data = {};
-      Object.keys(localStorage).filter(k => k.startsWith("recipe_")).forEach(k => {
-        data[k] = JSON.parse(localStorage.getItem(k));
+      Object.keys(localStorage).filter(k => k.startsWith('recipe_')).forEach(k => {
+        try {
+          data[k] = JSON.parse(localStorage.getItem(k));
+        } catch(e) {}
       });
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'all_recipes.json';
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+      a.remove();
     }
-
-    function importAll(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        const json = JSON.parse(e.target.result);
-        Object.entries(json).forEach(([key, val]) => {
-          localStorage.setItem(key, JSON.stringify(val));
-        });
-        updateSavedList();
-      };
-      reader.readAsText(file);
-    }
-
-    window.onload = updateSavedList;
-  </script>
-</body>
+    window.exportAll = exportAll;
+    </script>
+  </body>
 </html>
