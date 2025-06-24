@@ -76,48 +76,228 @@
     .saved-item {
       background: #fff;
       border-radius: 8px;
-      padding: 8px;
+      padding: 8px 8px 8px 12px;
       margin: 6px 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-
-    .saved-item button {
-      background-color: #27ae60;
+    .saved-item .saved-title {
+      flex: 1 1 0;
+      margin: 0 6px;
+      font-size: 1em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-
+    .saved-item button {
+      background: none;
+      color: #2980b9;
+      border: none;
+      font-size: 1.3em;
+      padding: 4px 8px;
+      margin: 0 2px;
+      border-radius: 6px;
+      min-width: 0;
+      width: auto;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .saved-item button:hover {
+      background: #f0f8ff;
+    }
     .saved-item button:last-child {
-      background-color: #e74c3c;
-      margin-left: 10px;
+      color: #e74c3c;
+      background: none;
+      margin-left: 2px;
+    }
+    /* ファイル選択UI統一 */
+    .file-label {
+      display: inline-block;
+      background: #27ae60;
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 16px;
+      margin: 0 8px 8px 0;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.2s;
+    }
+    .file-label:hover {
+      background: #219150;
+    }
+    input[type="file"] {
+      display: none;
     }
 
     @media (max-width: 600px) {
+      /* タブレット・小型PCも含む広めの調整 */
       body {
-        margin: 4px;
+        margin: 8px;
         padding: 0;
       }
-      nav {
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 10px;
+      #footer-nav {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        background: #fff;
+        border-top: 1px solid #e0e0e0;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+        padding: 0;
+        margin: 0;
+        height: 54px;
       }
+      #footer-nav button {
+        flex: 1 1 0;
+        min-width: 0;
+        margin: 0;
+        border-radius: 0;
+        background: none;
+        color: #2980b9;
+        font-size: 0.98em;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        box-shadow: none;
+      }
+      #footer-nav button.active {
+        color: #3498db;
+        font-weight: bold;
+        border-top: 2px solid #3498db;
+        background: #f0f8ff;
+      }
+      #footer-nav button span {
+        font-size: 1.3em;
+        display: block;
+        line-height: 1.1;
+      }
+      body {
+        padding-bottom: 60px !important;
+      }
+      /* 各ビューの主要ボタンは縦並び・小さめ・余白最小化 */
+      #view-edit > button, #view-shopping > button, #view-saved > button {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        font-size: 1em;
+        padding: 8px 0;
+        margin: 0 0 8px 0;
+        border-radius: 8px;
+      }
+      #view-edit, #view-shopping, #view-saved {
+        padding: 0 2px;
+      }
+      /* ボタンの高さを抑え、余白も調整 */
       button, input[type="text"], input[type="number"], select {
-        font-size: 1.1em;
-        padding: 12px 0;
+        font-size: 1.08em;
+        padding: 8px 0;
         margin: 6px 0;
         width: 100%;
         min-width: 0;
         box-sizing: border-box;
       }
       .recipe, #shopping-list, .saved-item {
-        padding: 8px 4px;
-        margin-bottom: 18px;
+        padding: 10px 6px;
+        margin-bottom: 20px;
       }
       h1, h2 {
-        font-size: 1.2em;
+        font-size: 1.15em;
         margin: 10px 0 8px 0;
+      }
+    }
+    @media (max-width: 430px) {
+      /* スマホ（iPhone SE3, Pixel 8a等）向けの強い調整 */
+      body {
+        margin: 2px;
+        padding: 0;
+      }
+      #footer-nav {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        background: #fff;
+        border-top: 1px solid #e0e0e0;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+        padding: 0;
+        margin: 0;
+        height: 54px;
+      }
+      #footer-nav button {
+        flex: 1 1 0;
+        min-width: 0;
+        margin: 0;
+        border-radius: 0;
+        background: none;
+        color: #2980b9;
+        font-size: 0.98em;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        box-shadow: none;
+      }
+      #footer-nav button.active {
+        color: #3498db;
+        font-weight: bold;
+        border-top: 2px solid #3498db;
+        background: #f0f8ff;
+      }
+      #footer-nav button span {
+        font-size: 1.3em;
+        display: block;
+        line-height: 1.1;
+      }
+      body {
+        padding-bottom: 60px !important;
+      }
+      /* 各ビューの主要ボタンは縦並び・小さめ・余白最小化 */
+      #view-edit > button, #view-shopping > button, #view-saved > button {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        font-size: 1em;
+        padding: 8px 0;
+        margin: 0 0 8px 0;
+        border-radius: 8px;
+      }
+      #view-edit, #view-shopping, #view-saved {
+        padding: 0 1px;
+      }
+      button, input[type="text"], input[type="number"], select {
+        font-size: 1.05em;
+        padding: 7px 0;
+        margin: 6px 0;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+      .recipe, #shopping-list, #saved-item {
+        padding: 6px 2px;
+        margin-bottom: 14px;
+      }
+      h1, h2 {
+        font-size: 1.05em;
+        margin: 8px 0 6px 0;
       }
       table, thead, tbody, th, td, tr {
         display: block;
@@ -127,15 +307,15 @@
         display: none;
       }
       tr {
-        margin-bottom: 18px;
+        margin-bottom: 14px;
         border-bottom: 2px solid #eee;
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-        padding: 8px 0;
+        padding: 6px 0;
       }
       td {
-        padding: 8px 0 8px 40%;
+        padding: 8px 0 8px 44%;
         position: relative;
         min-height: 36px;
         border: none;
@@ -148,10 +328,10 @@
         position: absolute;
         left: 8px;
         top: 8px;
-        width: 38%;
+        width: 40%;
         font-weight: bold;
         color: #888;
-        font-size: 0.98em;
+        font-size: 0.99em;
         white-space: nowrap;
       }
       /* レシピ編集テーブル */
@@ -169,17 +349,17 @@
         flex-direction: column;
         align-items: stretch;
         gap: 6px;
-        padding: 10px 4px;
+        padding: 8px 2px;
       }
       .saved-item button {
         width: 100%;
         margin: 4px 0;
       }
       #saved-list {
-        margin-bottom: 20px;
+        margin-bottom: 14px;
       }
       #saved-for-shopping {
-        padding: 8px 2px;
+        padding: 6px 2px;
       }
       #recipes, #shopping-list, #saved-list {
         margin: 0;
@@ -188,10 +368,10 @@
   </style>
 </head>
 <body>
-    <nav style="display:flex;gap:10px;margin-bottom:20px;">
-      <button onclick="showView('edit')" id="nav-edit">レシピ編集</button>
-      <button onclick="showView('shopping')" id="nav-shopping">買い物リスト</button>
-      <button onclick="showView('saved')" id="nav-saved">保存データ管理</button>
+    <nav id="footer-nav">
+      <button onclick="showView('edit')" id="nav-edit"><span>📝</span>編集</button>
+      <button onclick="showView('shopping')" id="nav-shopping"><span>🛒</span>買い物</button>
+      <button onclick="showView('saved')" id="nav-saved"><span>📂</span>保存</button>
     </nav>
     <div id="view-edit">
       <h1>レシピスケーラー</h1>
@@ -215,7 +395,7 @@
     <div id="view-saved" style="display:none">
       <h2>📂 保存済みデータ</h2>
       <button onclick="exportAll()">📤 エクスポート</button>
-      <input type="file" onchange="importAll(event)" />
+      <label class="file-label">📥 インポート<input type="file" onchange="importAll(event)" /></label>
       <button onclick="alert('将来的に対応予定です')">レシピサイトからインポート（準備中）</button>
       <div id="saved-list"></div>
     </div>
@@ -356,11 +536,10 @@
         const date = data.updated ? data.updated.split('T')[0] : '';
         const container = document.createElement('div');
         container.className = 'saved-item';
-        // 削除ボタンはconfirm付きでdeleteSlotを呼ぶ
         container.innerHTML = `
-          <button onclick="loadFromSlot('${key}')">📥 復元</button>
-          <span style="margin: 0 10px;">🍳 ${title} <span style='color:#888;font-size:0.9em'>(最終更新:${date})</span></span>
-          <button onclick=\"if(confirm('本当に削除しますか？'))deleteSlot('${key}')\">🗑 削除</button>
+          <button title="復元" onclick="loadFromSlot('${key}')">📥</button>
+          <span class="saved-title">🍳 ${title} <span style='color:#888;font-size:0.9em'>(最終更新:${date})</span></span>
+          <button title="削除" onclick=\"if(confirm('本当に削除しますか？'))deleteSlot('${key}')\">🗑</button>
         `;
         div.appendChild(container);
       });
@@ -407,9 +586,9 @@
         document.getElementById('view-shopping').style.display = view === 'shopping' ? '' : 'none';
         document.getElementById('view-saved').style.display = view === 'saved' ? '' : 'none';
         // ナビのアクティブ表示
-        document.getElementById('nav-edit').style.backgroundColor = view === 'edit' ? '#2980b9' : '#3498db';
-        document.getElementById('nav-shopping').style.backgroundColor = view === 'shopping' ? '#2980b9' : '#3498db';
-        document.getElementById('nav-saved').style.backgroundColor = view === 'saved' ? '#2980b9' : '#3498db';
+        document.getElementById('nav-edit').classList.toggle('active', view === 'edit');
+      document.getElementById('nav-shopping').classList.toggle('active', view === 'shopping');
+      document.getElementById('nav-saved').classList.toggle('active', view === 'saved');
       }
       // 初期表示
       window.onload = function() {
