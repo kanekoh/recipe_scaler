@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>レシピスケーラー（保存と買い物リスト付き）</title>
   <style>
-    * {
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       box-sizing: border-box;
     }
 
@@ -17,6 +20,7 @@
       margin: 1.25rem;
       color: #333;
       font-size: 1rem;
+      padding-bottom: 54px; /* フッター分の余白を常に確保 */
     }
 
     h1, h2 {
@@ -90,8 +94,11 @@
     /* --- フッター型ナビは従来のまま --- */
     #footer-nav {
       position: fixed;
-      left: 0; right: 0; bottom: 0;
-      z-index: 100;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      z-index: 9999;
       display: flex;
       flex-direction: row;
       justify-content: space-around;
@@ -410,6 +417,14 @@
     }
     body.is-mobile .saved-title {
       font-size: 1.1rem;
+    }
+
+    /* iOS/Androidの横スクロール防止 */
+    @media (max-width: 600px) {
+      html, body {
+        width: 100vw;
+        overflow-x: hidden;
+      }
     }
     </style>
 </head>
