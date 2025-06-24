@@ -9,31 +9,31 @@
       padding: 0;
       height: 100%;
       box-sizing: border-box;
+      width: 100vw;
+      overflow-x: hidden;
     }
-
     html {
       font-size: 16px;
     }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f5f7fa;
-      margin: 1.25rem;
+      margin: 1rem;
       color: #333;
       font-size: 1rem;
-      padding-bottom: 54px; /* フッター分の余白を常に確保 */
+      padding-bottom: 3.5rem; /* フッター分の余白 */
     }
 
     h1, h2 {
       color: #2c3e50;
       font-size: 1.5rem;
-      margin: 0.8rem 0 0.6rem 0;
+      margin: 1rem 0 0.7rem 0;
     }
 
-    /* --- ボタン共通 --- */
     .button-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 0.6rem;
       margin-bottom: 1rem;
       justify-content: flex-start;
       align-items: flex-start;
@@ -45,13 +45,12 @@
       background-color: #3498db;
       border: none;
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 0.5rem;
       cursor: pointer;
       transition: background-color 0.3s;
-      font-size: 1.05rem;
-      min-width: unset;
-      min-height: 2.2rem;
+      font-size: 1.1rem;
+      min-height: 2.4rem;
       display: inline-flex;
       align-items: center;
       gap: 0.3em;
@@ -61,8 +60,6 @@
     }
     button .icon {
       font-size: 1.1em;
-      display: inline-flex;
-      align-items: center;
       margin-right: 0.2em;
     }
     button:only-child .icon {
@@ -71,53 +68,30 @@
     button:hover {
       background-color: #2980b9;
     }
-    @media (max-width: 600px) {
-      .button-row {
-        flex-direction: column;
-        gap: 0.2rem;
-        align-items: stretch;
-      }
-      button {
-        width: 100%;
-        font-size: 1rem;
-        padding: 0.7rem 0.5rem;
-        min-width: 0;
-      }
-    }
-    @media (max-width: 430px) {
-      button {
-        font-size: 0.98rem;
-        padding: 0.5rem 0.3rem;
-      }
-    }
 
-    /* --- フッター型ナビは従来のまま --- */
+    /* フッターナビ */
     #footer-nav {
       position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      left: 0; right: 0; bottom: 0;
       width: 100vw;
       z-index: 9999;
       display: flex;
-      flex-direction: row;
       justify-content: space-around;
       align-items: center;
       background: #fff;
       border-top: 1px solid #e0e0e0;
       box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+      height: 3.5rem;
       padding: 0;
       margin: 0;
-      height: 54px;
     }
     #footer-nav button {
       flex: 1 1 0;
-      min-width: 0;
       margin: 0;
       border-radius: 0;
       background: none;
       color: #2980b9;
-      font-size: 1em;
+      font-size: 1.1rem;
       padding: 0;
       height: 100%;
       display: flex;
@@ -127,7 +101,6 @@
       border: none;
       box-shadow: none;
       gap: 0.1em;
-      white-space: nowrap;
     }
     #footer-nav button.active {
       color: #3498db;
@@ -141,65 +114,57 @@
       line-height: 1.1;
     }
 
+    /* フォームUI */
     input[type="text"], input[type="number"], select {
-      padding: 0.4rem 0.5rem;
-      margin: 0.25rem 0;
+      padding: 0.5rem 0.7rem;
+      margin: 0.3rem 0;
       border-radius: 0.4rem;
       border: 1px solid #ccc;
       width: 100%;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       min-height: 2.2rem;
+      box-sizing: border-box;
     }
 
+    /* テーブル */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 0.6rem;
+      margin-top: 0.7rem;
       font-size: 1rem;
     }
-
     th, td {
-      padding: 0.6rem;
+      padding: 0.65rem;
       border-bottom: 1px solid #ddd;
       text-align: left;
     }
-
     th {
       background-color: #ecf0f1;
-      font-size: 1.05rem;
+      font-size: 1.07rem;
     }
 
-    .recipe {
+    /* パネル系 */
+    .recipe, #shopping-list {
       background: white;
       border-radius: 0.7rem;
       padding: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.2rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-
-    #shopping-list {
-      background: white;
-      padding: 1rem;
-      border-radius: 0.7rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-
     .saved-item {
       background: #fff;
       border-radius: 0.5rem;
-      padding: 0.5rem 0.5rem 0.5rem 0.8rem;
+      padding: 0.6rem 0.6rem 0.6rem 1rem;
       margin: 0.4rem 0;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
       gap: 0.5rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      font-size: 1rem;
+      font-size: 1.02rem;
     }
     .saved-item .saved-title {
       flex: 1 1 0;
       margin: 0 0.4rem;
-      font-size: 1.05rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -217,7 +182,6 @@
       height: 2rem;
       display: flex;
       align-items: center;
-      justify-content: center;
       transition: background 0.2s;
     }
     .saved-item button:hover {
@@ -228,7 +192,8 @@
       background: none;
       margin-left: 0.1rem;
     }
-    /* ファイル選択UI統一 */
+
+    /* ファイル選択UI */
     .file-label {
       display: inline-block;
       background: #27ae60;
@@ -247,112 +212,111 @@
       display: none;
     }
 
+    /* ====== スマホレイアウト ====== */
     @media (max-width: 600px) {
-      body {
-        margin: 0.5rem;
+      html, body {
+        margin: 0;
         padding: 0;
-        font-size: 0.98rem;
+        width: 100vw;
+        font-size: 15px;
       }
-      #footer-nav {
-        height: 3.2rem;
-      }
-      #footer-nav button {
-        font-size: 1rem;
-        min-height: 2.2rem;
-      }
-      #footer-nav button span {
-        font-size: 1.2rem;
-      }
-      #view-edit > button, #view-shopping > button, #view-saved > button {
-        font-size: 1rem;
-        padding: 0.5rem 0;
-        margin: 0 0 0.5rem 0;
-        border-radius: 0.5rem;
-      }
-      button, input[type="text"], input[type="number"], select {
-        font-size: 1rem;
-        padding: 0.5rem 0.5rem;
-        margin: 0.3rem 0;
-        min-height: 2rem;
-      }
-      .recipe, #shopping-list, .saved-item {
-        padding: 0.6rem 0.4rem;
-        margin-bottom: 1.2rem;
+      body {
+        font-size: 0.99rem;
+        margin: 0.5rem;
+        padding-bottom: 4.5rem;
       }
       h1, h2 {
-        font-size: 1.1rem;
+        font-size: 1.18rem;
         margin: 0.6rem 0 0.5rem 0;
       }
-    }
-    @media (max-width: 430px) {
-      body {
-        margin: 0.1rem;
-        padding: 0;
-        font-size: 0.95rem;
+      .button-row {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+        margin-bottom: 0.8rem;
+      }
+      button {
+        width: 100%;
+        font-size: 1.05rem;
+        padding: 0.75rem 0.5rem;
+        min-width: 0;
+        min-height: 2.2rem;
       }
       #footer-nav {
-        height: 3.2rem;
-      }
-      #footer-nav button {
-        font-size: 0.98rem;
-        min-height: 2rem;
+        height: 3.4rem;
       }
       #footer-nav button span {
         font-size: 1.1rem;
       }
-      #view-edit > button, #view-shopping > button, #view-saved > button {
-        font-size: 0.98rem;
-        padding: 0.4rem 0;
-        margin: 0 0 0.4rem 0;
-        border-radius: 0.4rem;
-      }
-      button, input[type="text"], input[type="number"], select {
-        font-size: 0.98rem;
-        padding: 0.4rem 0.4rem;
-        margin: 0.2rem 0;
-        min-height: 1.8rem;
-      }
-      .recipe, #shopping-list, #saved-item {
-        padding: 0.4rem 0.1rem;
+      .recipe, #shopping-list {
+        padding: 0.6rem 0.3rem;
         margin-bottom: 0.8rem;
       }
-      h1, h2 {
+      .saved-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.2rem;
+        padding: 0.5rem 0.2rem;
         font-size: 1rem;
-        margin: 0.4rem 0 0.3rem 0;
+      }
+      .saved-item button {
+        width: 100%;
+        margin: 0.15rem 0;
+      }
+    }
+
+    /* 極小画面対応（iPhone SEなど） */
+    @media (max-width: 430px) {
+      html {
+        font-size: 14px;
+      }
+      body {
+        margin: 0.25rem;
+        font-size: 0.97rem;
+      }
+      h1, h2 {
+        font-size: 1.05rem;
+        margin: 0.35rem 0 0.3rem 0;
+      }
+      .button-row {
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+      }
+      button {
+        font-size: 0.97rem;
+        padding: 0.5rem 0.2rem;
+        min-height: 2rem;
       }
       table, thead, tbody, th, td, tr {
         display: block;
         width: 100%;
       }
-      thead {
-        display: none;
-      }
+      thead { display: none; }
       tr {
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.6rem;
         border-bottom: 2px solid #eee;
         background: #fff;
-        border-radius: 0.5rem;
+        border-radius: 0.4rem;
         box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-        padding: 0.4rem 0;
+        padding: 0.3rem 0;
       }
       td {
-        padding: 0.5rem 0 0.5rem 44%;
+        padding: 0.4rem 0 0.4rem 40%;
         position: relative;
-        min-height: 1.5rem;
+        min-height: 1.2rem;
         border: none;
         border-bottom: 1px solid #f0f0f0;
+        box-sizing: border-box;
       }
-      td:last-child {
-        border-bottom: none;
-      }
+      td:last-child { border-bottom: none; }
       td::before {
         position: absolute;
         left: 0.3rem;
         top: 0.3rem;
-        width: 40%;
+        width: 38%;
         font-weight: bold;
         color: #888;
-        font-size: 0.95rem;
+        font-size: 0.93rem;
         white-space: nowrap;
       }
       /* レシピ編集テーブル */
@@ -365,66 +329,6 @@
       #shopping-list tbody tr td:nth-child(1)::before { content: '食材'; }
       #shopping-list tbody tr td:nth-child(2)::before { content: '合計量'; }
       #shopping-list tbody tr td:nth-child(3)::before { content: '単位'; }
-      /* 保存リスト */
-      .saved-item {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.3rem;
-        padding: 0.5rem 0.1rem;
-      }
-      .saved-item button {
-        width: 100%;
-        margin: 0.2rem 0;
-      }
-      #saved-list {
-        margin-bottom: 0.8rem;
-      }
-      #saved-for-shopping {
-        padding: 0.3rem 0.1rem;
-      }
-      #recipes, #shopping-list, #saved-list {
-        margin: 0;
-      }
-    }
-    /* --- スマホ専用レイアウト --- */
-    body.is-mobile {
-      font-size: 1.2rem;
-      padding-bottom: 3.5rem !important;
-    }
-    body.is-mobile #footer-nav button,
-    body.is-mobile #view-edit > button,
-    body.is-mobile #view-shopping > button,
-    body.is-mobile #view-saved > button {
-      font-size: 1.1rem;
-      padding: 0.8rem 0;
-      min-height: 2.5rem;
-    }
-    body.is-mobile button,
-    body.is-mobile input[type="text"],
-    body.is-mobile input[type="number"],
-    body.is-mobile select {
-      font-size: 1.1rem;
-      padding: 0.7rem 0;
-      margin: 0.4rem 0;
-    }
-    body.is-mobile #footer-nav button span {
-      font-size: 1.5rem;
-    }
-    body.is-mobile h1,
-    body.is-mobile h2 {
-      font-size: 1.2rem;
-      margin: 0.7rem 0 0.5rem 0;
-    }
-    body.is-mobile .saved-title {
-      font-size: 1.1rem;
-    }
-
-    /* iOS/Androidの横スクロール防止 */
-    @media (max-width: 600px) {
-      html, body {
-        width: 100vw;
-        overflow-x: hidden;
-      }
     }
     </style>
 </head>
