@@ -94,24 +94,95 @@
     }
 
     @media (max-width: 600px) {
+      body {
+        margin: 4px;
+        padding: 0;
+      }
+      nav {
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      button, input[type="text"], input[type="number"], select {
+        font-size: 1.1em;
+        padding: 12px 0;
+        margin: 6px 0;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+      .recipe, #shopping-list, .saved-item {
+        padding: 8px 4px;
+        margin-bottom: 18px;
+      }
+      h1, h2 {
+        font-size: 1.2em;
+        margin: 10px 0 8px 0;
+      }
       table, thead, tbody, th, td, tr {
         display: block;
+        width: 100%;
       }
-
-      th {
-        background-color: transparent;
+      thead {
+        display: none;
       }
-
+      tr {
+        margin-bottom: 18px;
+        border-bottom: 2px solid #eee;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        padding: 8px 0;
+      }
       td {
-        padding-left: 50%;
+        padding: 8px 0 8px 40%;
         position: relative;
+        min-height: 36px;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
       }
-
+      td:last-child {
+        border-bottom: none;
+      }
       td::before {
         position: absolute;
-        left: 10px;
-        width: 45%;
+        left: 8px;
+        top: 8px;
+        width: 38%;
+        font-weight: bold;
+        color: #888;
+        font-size: 0.98em;
         white-space: nowrap;
+      }
+      /* レシピ編集テーブル */
+      .recipe table tbody tr td:nth-child(1)::before { content: '食材'; }
+      .recipe table tbody tr td:nth-child(2)::before { content: '元の分量'; }
+      .recipe table tbody tr td:nth-child(3)::before { content: '単位'; }
+      .recipe table tbody tr td:nth-child(4)::before { content: '変換後'; }
+      .recipe table tbody tr td:nth-child(5)::before { content: '削除'; }
+      /* 買い物リストテーブル */
+      #shopping-list tbody tr td:nth-child(1)::before { content: '食材'; }
+      #shopping-list tbody tr td:nth-child(2)::before { content: '合計量'; }
+      #shopping-list tbody tr td:nth-child(3)::before { content: '単位'; }
+      /* 保存リスト */
+      .saved-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding: 10px 4px;
+      }
+      .saved-item button {
+        width: 100%;
+        margin: 4px 0;
+      }
+      #saved-list {
+        margin-bottom: 20px;
+      }
+      #saved-for-shopping {
+        padding: 8px 2px;
+      }
+      #recipes, #shopping-list, #saved-list {
+        margin: 0;
       }
     }
   </style>
@@ -172,8 +243,8 @@
       div.id = `recipe-${recipeId}`;
       div.innerHTML = `
         <input type="text" placeholder="レシピ名" value="${data?.title || ''}"><br>
-        元の人数: <input type="number" id="from-${recipeId}" value="2" style="width:60px;">
-        → 希望人数: <input type="number" id="to-${recipeId}" value="4" style="width:60px;">
+        元の人数: <input type="number" id="from-${recipeId}" value="${data?.from || 2}" style="width:60px;">
+        → 希望人数: <input type="number" id="to-${recipeId}" value="${data?.to || 4}" style="width:60px;">
         <button onclick="scaleRecipe(${recipeId})">変換</button><br><br>
         <table><thead><tr><th>食材</th><th>元の分量</th><th>単位</th><th>変換後</th><th>削除</th></tr></thead><tbody></tbody></table><br>
       `;
@@ -182,14 +253,11 @@
       btn.textContent = '＋材料を追加';
       btn.onclick = () => tbody.appendChild(createIngredientRow());
       div.appendChild(btn);
-      
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = '🗑 このレシピを削除';
-    deleteBtn.onclick = () => div.remove();
-    div.appendChild(deleteBtn);
-    document.getElementById('recipes').appendChild(div);
-    
-
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = '🗑 このレシピを削除';
+      deleteBtn.onclick = () => div.remove();
+      div.appendChild(deleteBtn);
+      document.getElementById('recipes').appendChild(div);
       if (data?.ingredients) {
         data.ingredients.forEach(ing => tbody.appendChild(createIngredientRow(ing)));
       } else {
@@ -203,10 +271,17 @@
       if (!from || !to || from <= 0) return;
 
       const div = document.getElementById(`recipe-${recipeId}`);
-      div.querySelectorAll('tbody tr').forEach(tr => {
+      div.querySelectorAll('tbody tr').forEach(function(tr) {
         const originalVal = parseFloat(tr.querySelector('.original-amount').value);
         const output = tr.querySelector('.scaled-amount');
-        output.value = !isNaN(originalVal) ? (originalVal * to / from).toFixed(2) : '';
+        if (!isNaN(originalVal)) {
+          let scaled = originalVal * to / from;
+          // 小数点以下がある場合は1桁で切り上げ、なければ整数
+          let scaled10 = Math.ceil(scaled * 10) / 10;
+          output.value = Number.isInteger(scaled10) ? scaled10.toString() : scaled10.toFixed(1);
+        } else {
+          output.value = '';
+        }
       });
     }
 
@@ -219,8 +294,8 @@
 
     function updateShoppingList() {
       const summary = {};
-      document.querySelectorAll('.recipe').forEach(div => {
-        div.querySelectorAll('tbody tr').forEach(tr => {
+      document.querySelectorAll('.recipe').forEach(function(div) {
+        div.querySelectorAll('tbody tr').forEach(function(tr) {
           const name = tr.cells[0].querySelector('input').value;
           const scaled = parseFloat(tr.cells[3].querySelector('input').value);
           const unit = tr.cells[2].querySelector('select').value;
@@ -232,25 +307,29 @@
       });
       const tbody = document.querySelector('#shopping-list tbody');
       tbody.innerHTML = '';
-      Object.values(summary).forEach(item => {
+      Object.values(summary).forEach(function(item) {
+        // 必ず整数で切り上げ表示（小数点以下は表示しない）
+        let displayAmount = Math.ceil(item.amount);
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${item.name}</td><td>${item.amount.toFixed(2)}</td><td>${item.unit}</td>`;
+        tr.innerHTML = `<td>${item.name}</td><td>${displayAmount}</td><td>${item.unit}</td>`;
         tbody.appendChild(tr);
       });
     }
 
     function getRecipesData() {
       const recipes = [];
-      document.querySelectorAll('.recipe').forEach(div => {
+      document.querySelectorAll('.recipe').forEach(function(div, i) {
         const title = div.querySelector('input').value;
+        const from = parseFloat(div.querySelector(`#from-${i}`) ? div.querySelector(`#from-${i}`).value : 2);
+        const to = parseFloat(div.querySelector(`#to-${i}`) ? div.querySelector(`#to-${i}`).value : 4);
         const ingredients = [];
-        div.querySelectorAll('tbody tr').forEach(tr => {
+        div.querySelectorAll('tbody tr').forEach(function(tr) {
           const name = tr.cells[0].querySelector('input').value;
           const amount = tr.cells[1].querySelector('input').value;
           const unit = tr.cells[2].querySelector('select').value;
           if (name) ingredients.push({ name, amount, unit });
         });
-        recipes.push({ title, ingredients });
+        recipes.push({ title, from, to, ingredients });
       });
       return recipes;
     }
