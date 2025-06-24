@@ -8,26 +8,34 @@
       box-sizing: border-box;
     }
 
+    html {
+      font-size: 16px;
+    }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f5f7fa;
-      margin: 20px;
+      margin: 1.25rem;
       color: #333;
+      font-size: 1rem;
     }
 
     h1, h2 {
       color: #2c3e50;
+      font-size: 1.5rem;
+      margin: 0.8rem 0 0.6rem 0;
     }
 
     button {
       background-color: #3498db;
       border: none;
       color: white;
-      padding: 8px 16px;
-      margin: 4px 4px 10px 0;
-      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      margin: 0.25rem 0.25rem 0.6rem 0;
+      border-radius: 0.5rem;
       cursor: pointer;
       transition: background-color 0.3s;
+      font-size: 1.1rem;
+      min-height: 2.5rem;
     }
 
     button:hover {
@@ -35,59 +43,64 @@
     }
 
     input[type="text"], input[type="number"], select {
-      padding: 6px;
-      margin: 4px 0;
-      border-radius: 6px;
+      padding: 0.4rem 0.5rem;
+      margin: 0.25rem 0;
+      border-radius: 0.4rem;
       border: 1px solid #ccc;
       width: 100%;
+      font-size: 1.1rem;
+      min-height: 2.2rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 0.6rem;
+      font-size: 1rem;
     }
 
     th, td {
-      padding: 10px;
+      padding: 0.6rem;
       border-bottom: 1px solid #ddd;
       text-align: left;
     }
 
     th {
       background-color: #ecf0f1;
+      font-size: 1.05rem;
     }
 
     .recipe {
       background: white;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 30px;
+      border-radius: 0.7rem;
+      padding: 1rem;
+      margin-bottom: 2rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     #shopping-list {
       background: white;
-      padding: 16px;
-      border-radius: 10px;
+      padding: 1rem;
+      border-radius: 0.7rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     .saved-item {
       background: #fff;
-      border-radius: 8px;
-      padding: 8px 8px 8px 12px;
-      margin: 6px 0;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.5rem 0.5rem 0.8rem;
+      margin: 0.4rem 0;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 8px;
+      gap: 0.5rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-size: 1rem;
     }
     .saved-item .saved-title {
       flex: 1 1 0;
-      margin: 0 6px;
-      font-size: 1em;
+      margin: 0 0.4rem;
+      font-size: 1.05rem;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -96,13 +109,13 @@
       background: none;
       color: #2980b9;
       border: none;
-      font-size: 1.3em;
-      padding: 4px 8px;
-      margin: 0 2px;
-      border-radius: 6px;
+      font-size: 1.2rem;
+      padding: 0.2rem 0.5rem;
+      margin: 0 0.1rem;
+      border-radius: 0.4rem;
       min-width: 0;
       width: auto;
-      height: 36px;
+      height: 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -114,18 +127,18 @@
     .saved-item button:last-child {
       color: #e74c3c;
       background: none;
-      margin-left: 2px;
+      margin-left: 0.1rem;
     }
     /* ファイル選択UI統一 */
     .file-label {
       display: inline-block;
       background: #27ae60;
       color: #fff;
-      border-radius: 8px;
-      padding: 8px 16px;
-      margin: 0 8px 8px 0;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem 0.5rem 0;
       cursor: pointer;
-      font-size: 1em;
+      font-size: 1rem;
       transition: background 0.2s;
     }
     .file-label:hover {
@@ -136,168 +149,77 @@
     }
 
     @media (max-width: 600px) {
-      /* タブレット・小型PCも含む広めの調整 */
       body {
-        margin: 8px;
+        margin: 0.5rem;
         padding: 0;
+        font-size: 0.98rem;
       }
       #footer-nav {
-        position: fixed;
-        left: 0; right: 0; bottom: 0;
-        z-index: 100;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        background: #fff;
-        border-top: 1px solid #e0e0e0;
-        box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
-        padding: 0;
-        margin: 0;
-        height: 54px;
+        height: 3.2rem;
       }
       #footer-nav button {
-        flex: 1 1 0;
-        min-width: 0;
-        margin: 0;
-        border-radius: 0;
-        background: none;
-        color: #2980b9;
-        font-size: 0.98em;
-        padding: 0;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        box-shadow: none;
-      }
-      #footer-nav button.active {
-        color: #3498db;
-        font-weight: bold;
-        border-top: 2px solid #3498db;
-        background: #f0f8ff;
+        font-size: 1rem;
+        min-height: 2.2rem;
       }
       #footer-nav button span {
-        font-size: 1.3em;
-        display: block;
-        line-height: 1.1;
+        font-size: 1.2rem;
       }
-      body {
-        padding-bottom: 60px !important;
-      }
-      /* 各ビューの主要ボタンは縦並び・小さめ・余白最小化 */
       #view-edit > button, #view-shopping > button, #view-saved > button {
-        display: block;
-        width: 100%;
-        min-width: 0;
-        font-size: 1em;
-        padding: 8px 0;
-        margin: 0 0 8px 0;
-        border-radius: 8px;
+        font-size: 1rem;
+        padding: 0.5rem 0;
+        margin: 0 0 0.5rem 0;
+        border-radius: 0.5rem;
       }
-      #view-edit, #view-shopping, #view-saved {
-        padding: 0 2px;
-      }
-      /* ボタンの高さを抑え、余白も調整 */
       button, input[type="text"], input[type="number"], select {
-        font-size: 1.08em;
-        padding: 8px 0;
-        margin: 6px 0;
-        width: 100%;
-        min-width: 0;
-        box-sizing: border-box;
+        font-size: 1rem;
+        padding: 0.5rem 0.5rem;
+        margin: 0.3rem 0;
+        min-height: 2rem;
       }
       .recipe, #shopping-list, .saved-item {
-        padding: 10px 6px;
-        margin-bottom: 20px;
+        padding: 0.6rem 0.4rem;
+        margin-bottom: 1.2rem;
       }
       h1, h2 {
-        font-size: 1.15em;
-        margin: 10px 0 8px 0;
+        font-size: 1.1rem;
+        margin: 0.6rem 0 0.5rem 0;
       }
     }
     @media (max-width: 430px) {
-      /* スマホ（iPhone SE3, Pixel 8a等）向けの強い調整 */
       body {
-        margin: 2px;
+        margin: 0.1rem;
         padding: 0;
+        font-size: 0.95rem;
       }
       #footer-nav {
-        position: fixed;
-        left: 0; right: 0; bottom: 0;
-        z-index: 100;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        background: #fff;
-        border-top: 1px solid #e0e0e0;
-        box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
-        padding: 0;
-        margin: 0;
-        height: 54px;
+        height: 3.2rem;
       }
       #footer-nav button {
-        flex: 1 1 0;
-        min-width: 0;
-        margin: 0;
-        border-radius: 0;
-        background: none;
-        color: #2980b9;
-        font-size: 0.98em;
-        padding: 0;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        box-shadow: none;
-      }
-      #footer-nav button.active {
-        color: #3498db;
-        font-weight: bold;
-        border-top: 2px solid #3498db;
-        background: #f0f8ff;
+        font-size: 0.98rem;
+        min-height: 2rem;
       }
       #footer-nav button span {
-        font-size: 1.3em;
-        display: block;
-        line-height: 1.1;
+        font-size: 1.1rem;
       }
-      body {
-        padding-bottom: 60px !important;
-      }
-      /* 各ビューの主要ボタンは縦並び・小さめ・余白最小化 */
       #view-edit > button, #view-shopping > button, #view-saved > button {
-        display: block;
-        width: 100%;
-        min-width: 0;
-        font-size: 1em;
-        padding: 8px 0;
-        margin: 0 0 8px 0;
-        border-radius: 8px;
-      }
-      #view-edit, #view-shopping, #view-saved {
-        padding: 0 1px;
+        font-size: 0.98rem;
+        padding: 0.4rem 0;
+        margin: 0 0 0.4rem 0;
+        border-radius: 0.4rem;
       }
       button, input[type="text"], input[type="number"], select {
-        font-size: 1.05em;
-        padding: 7px 0;
-        margin: 6px 0;
-        width: 100%;
-        min-width: 0;
-        box-sizing: border-box;
+        font-size: 0.98rem;
+        padding: 0.4rem 0.4rem;
+        margin: 0.2rem 0;
+        min-height: 1.8rem;
       }
       .recipe, #shopping-list, #saved-item {
-        padding: 6px 2px;
-        margin-bottom: 14px;
+        padding: 0.4rem 0.1rem;
+        margin-bottom: 0.8rem;
       }
       h1, h2 {
-        font-size: 1.05em;
-        margin: 8px 0 6px 0;
+        font-size: 1rem;
+        margin: 0.4rem 0 0.3rem 0;
       }
       table, thead, tbody, th, td, tr {
         display: block;
@@ -307,17 +229,17 @@
         display: none;
       }
       tr {
-        margin-bottom: 14px;
+        margin-bottom: 0.8rem;
         border-bottom: 2px solid #eee;
         background: #fff;
-        border-radius: 8px;
+        border-radius: 0.5rem;
         box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-        padding: 6px 0;
+        padding: 0.4rem 0;
       }
       td {
-        padding: 8px 0 8px 44%;
+        padding: 0.5rem 0 0.5rem 44%;
         position: relative;
-        min-height: 36px;
+        min-height: 1.5rem;
         border: none;
         border-bottom: 1px solid #f0f0f0;
       }
@@ -326,12 +248,12 @@
       }
       td::before {
         position: absolute;
-        left: 8px;
-        top: 8px;
+        left: 0.3rem;
+        top: 0.3rem;
         width: 40%;
         font-weight: bold;
         color: #888;
-        font-size: 0.99em;
+        font-size: 0.95rem;
         white-space: nowrap;
       }
       /* レシピ編集テーブル */
@@ -348,97 +270,54 @@
       .saved-item {
         flex-direction: column;
         align-items: stretch;
-        gap: 6px;
-        padding: 8px 2px;
+        gap: 0.3rem;
+        padding: 0.5rem 0.1rem;
       }
       .saved-item button {
         width: 100%;
-        margin: 4px 0;
+        margin: 0.2rem 0;
       }
       #saved-list {
-        margin-bottom: 14px;
+        margin-bottom: 0.8rem;
       }
       #saved-for-shopping {
-        padding: 6px 2px;
+        padding: 0.3rem 0.1rem;
       }
       #recipes, #shopping-list, #saved-list {
         margin: 0;
       }
     }
     /* --- スマホ専用レイアウト --- */
-    body.is-mobile #footer-nav {
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      z-index: 100;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: center;
-      background: #fff;
-      border-top: 1px solid #e0e0e0;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
-      padding: 0;
-      margin: 0;
-      height: 54px;
-    }
-    body.is-mobile #footer-nav button {
-      flex: 1 1 0;
-      min-width: 0;
-      margin: 0;
-      border-radius: 0;
-      background: none;
-      color: #2980b9;
-      font-size: 0.98em;
-      padding: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      box-shadow: none;
-    }
-    body.is-mobile #footer-nav button.active {
-      color: #3498db;
-      font-weight: bold;
-      border-top: 2px solid #3498db;
-      background: #f0f8ff;
-    }
-    body.is-mobile #footer-nav button span {
-      font-size: 1.3em;
-      display: block;
-      line-height: 1.1;
-    }
     body.is-mobile {
-      font-size: 32px;
-      padding-bottom: 60px !important;
+      font-size: 1.2rem;
+      padding-bottom: 3.5rem !important;
     }
     body.is-mobile #footer-nav button,
     body.is-mobile #view-edit > button,
     body.is-mobile #view-shopping > button,
     body.is-mobile #view-saved > button {
-      font-size: 1.3em;
-      padding: 24px 0;
-      min-height: 64px;
+      font-size: 1.1rem;
+      padding: 0.8rem 0;
+      min-height: 2.5rem;
     }
     body.is-mobile button,
     body.is-mobile input[type="text"],
     body.is-mobile input[type="number"],
     body.is-mobile select {
-      font-size: 1.25em;
-      padding: 20px 0;
-      margin: 12px 0;
+      font-size: 1.1rem;
+      padding: 0.7rem 0;
+      margin: 0.4rem 0;
     }
     body.is-mobile #footer-nav button span {
-      font-size: 2.2em;
+      font-size: 1.5rem;
     }
     body.is-mobile h1,
     body.is-mobile h2 {
-      font-size: 1.5em;
-      margin: 18px 0 14px 0;
+      font-size: 1.2rem;
+      margin: 0.7rem 0 0.5rem 0;
     }
     body.is-mobile .saved-title {
-      font-size: 1.2em;
+      font-size: 1.1rem;
     }
     </style>
 </head>
