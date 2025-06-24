@@ -790,6 +790,19 @@
         el.textContent = '';
       }
     }
+
+    // --- 自動UIサイズ最適化 ---
+    function autoAdjustFontSize() {
+      const dpr = window.devicePixelRatio || 1;
+      const width = window.innerWidth;
+      let base = 16;
+      if (width <= 430) base = 18 * dpr;
+      else if (width <= 600) base = 16 * dpr;
+      else base = 15 * dpr;
+      document.documentElement.style.fontSize = base + 'px';
+    }
+    window.addEventListener('resize', autoAdjustFontSize);
+    window.addEventListener('DOMContentLoaded', autoAdjustFontSize);
     </script>
   </body>
 </html>
