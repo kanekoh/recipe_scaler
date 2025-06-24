@@ -410,39 +410,40 @@
       line-height: 1.1;
     }
     body.is-mobile {
-      font-size: 18px;
+      font-size: 32px;
       padding-bottom: 60px !important;
     }
     body.is-mobile #footer-nav button,
     body.is-mobile #view-edit > button,
     body.is-mobile #view-shopping > button,
     body.is-mobile #view-saved > button {
-      font-size: 1.15em;
-      padding: 14px 0;
-      min-height: 48px;
+      font-size: 1.3em;
+      padding: 24px 0;
+      min-height: 64px;
     }
     body.is-mobile button,
     body.is-mobile input[type="text"],
     body.is-mobile input[type="number"],
     body.is-mobile select {
-      font-size: 1.12em;
-      padding: 12px 0;
-      margin: 8px 0;
+      font-size: 1.25em;
+      padding: 20px 0;
+      margin: 12px 0;
     }
     body.is-mobile #footer-nav button span {
-      font-size: 1.6em;
+      font-size: 2.2em;
     }
     body.is-mobile h1,
     body.is-mobile h2 {
-      font-size: 1.25em;
-      margin: 14px 0 10px 0;
+      font-size: 1.5em;
+      margin: 18px 0 14px 0;
     }
     body.is-mobile .saved-title {
-      font-size: 1.08em;
+      font-size: 1.2em;
     }
     </style>
 </head>
 <body>
+    <div id="last-updated" style="text-align:right;color:#888;font-size:0.98em;margin:0 0 8px 0;"></div>
     <nav id="footer-nav">
       <button onclick="showView('edit')" id="nav-edit"><span>📝</span>編集</button>
       <button onclick="showView('shopping')" id="nav-shopping"><span>🛒</span>買い物</button>
@@ -599,6 +600,7 @@
       const data = { updated: now.toISOString(), recipes };
       localStorage.setItem(key, JSON.stringify(data));
       updateSavedList();
+      updateLastUpdated();
     }
 
     // 保存リスト表示を料理名メイン＋最終更新日形式に
@@ -618,6 +620,7 @@
         `;
         div.appendChild(container);
       });
+      updateLastUpdated();
     }
 
     // 保存データのロードも新形式に対応
@@ -727,6 +730,7 @@
       updateSavedList();
       clearAll();
       updateShoppingList();
+      updateLastUpdated();
     }
     window.deleteSlot = deleteSlot;
 
@@ -735,6 +739,7 @@
       document.getElementById('recipes').innerHTML = '';
       recipeCount = 0;
       if (update) updateShoppingList();
+      updateLastUpdated();
     }
     window.clearAll = clearAll;
 
@@ -768,6 +773,22 @@
     }
     if (isMobileDevice()) {
       document.body.classList.add('is-mobile');
+    }
+
+    function updateLastUpdated() {
+      let latest = null;
+      Object.keys(localStorage).filter(k => k.startsWith('recipe_')).forEach(key => {
+        const data = JSON.parse(localStorage.getItem(key));
+        if (data && data.updated) {
+          if (!latest || data.updated > latest) latest = data.updated;
+        }
+      });
+      const el = document.getElementById('last-updated');
+      if (latest) {
+        el.textContent = '最終更新: ' + latest.split('T')[0];
+      } else {
+        el.textContent = '';
+      }
     }
     </script>
   </body>
